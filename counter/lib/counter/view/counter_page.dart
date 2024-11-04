@@ -14,23 +14,42 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _multiRepository(_multiBloc(const CounterView()));
+    // return MultiRepositoryProvider(
+    //   providers: [
+    //     RepositoryProvider(create: (context) => CounterRepository()),
+    //   ],
+    //   child: MultiBlocProvider(
+    //     providers: [
+    //       BlocProvider(create: (context) => CounterCubit()),
+    //       BlocProvider(create: (context) {
+    //         return CounterBloc(context.read<CounterRepository>());
+    //       }),
+    //     ],
+    //     child: const CounterView(),
+    //   ),
+    // );
+  }
+
+  Widget _multiRepository(Widget child) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(create: (context) => CounterRepository()),
+        RepositoryProvider(
+            lazy: null, create: (context) => CounterRepository()),
       ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => CounterCubit()),
-          BlocProvider(create: (context) {
-            return CounterBloc(context.read<CounterRepository>());
-          }),
-        ],
-        child: const CounterView(),
-      ),
+      child: child,
     );
-    // return BlocProvider(
-    //   create: (_) => CounterCubit(),
-    //   child: const CounterView(),
-    // );
+  }
+
+  Widget _multiBloc(Widget child) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => CounterCubit()),
+        BlocProvider(create: (context) {
+          return CounterBloc(context.read<CounterRepository>());
+        }),
+      ],
+      child: child,
+    );
   }
 }
